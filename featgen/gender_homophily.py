@@ -26,7 +26,7 @@ def gender_homophily(input_file,profile_file, output_file, callerIdCol, receiver
 
     sf_merged['SameGenderCall']=sf_merged['APartyGender','BPartyGender'].apply(lambda x:1 if x['APartyGender']==x['BPartyGender'] else 0)
     sf_total=sf_merged.groupby(callerIdCol,operations={'TotalCalls':gl.aggregate.COUNT(receiverIdCol), 'UniqueBParty':gl.aggregate.COUNT_DISTINCT(receiverIdCol)})
-    sf_same=sf_merged.filter(1,'SameGenderCall').groupby(callerIdCol,operations={'TotalCalls_Same':gl.aggregate.COUNT(receiverIdCol), 'UniqueBParty_Same':gl.aggregate.COUNT_DISTINCT(receiverIdCol)})
+    sf_same=sf_merged.filter_by(1,'SameGenderCall').groupby(callerIdCol,operations={'TotalCalls_Same':gl.aggregate.COUNT(receiverIdCol), 'UniqueBParty_Same':gl.aggregate.COUNT_DISTINCT(receiverIdCol)})
     sf_merged=sf_total.join(sf_same, on=callerIdCol, how='left').fillna('TotalCalls_Same',0).fillna('UniqueBParty_Same',0)
     sf_merged['homophily_calls']=sf_merged['TotalCalls_Same']/sf_merged['TotalCalls']
     sf_merged['homophily_net']=sf_merged['UniqueBParty_Same']/sf_merged['UniqueBParty']
