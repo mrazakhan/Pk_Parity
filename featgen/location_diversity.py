@@ -2,7 +2,7 @@ import graphlab as gl
 import math
 import argparse
 import csv
-
+import sys
 # Read SF, Make A Copy, Transpose A and B
 
 def location_diversity(input_file, output_file, callerIdCol, receiverIdCol, callerCellCol, receiverCellCol):
@@ -23,19 +23,24 @@ def location_diversity(input_file, output_file, callerIdCol, receiverIdCol, call
     sf.head()
     sf=sf[[callerIdCol, callerCellCol]].dropna()
     sf.rename({callerCellCol:'Loc'})
-
+    print 'Shape before filtering missing towers', sf.shape
+    sf1=sf.filter_by('', 'Loc', exclude=True)
+    print 'Shape after filtering missing towers', sf.shape
     
     
     # calculate Total
-    sf=sf.groupby([callerIdCol,'Loc'],{'LocTotal':gl.aggregate.COUNT()})
-    sf_total=sf.groupby([callerIdCol],{'OverallTotal':gl.aggregate.COUNT()})
+    sf=sf1.groupby([callerIdCol,'Loc'],{'LocTotal':gl.aggregate.COUNT()})
+    sf_total=sf1.groupby([callerIdCol],{'OverallTotal':gl.aggregate.COUNT()})
     sf_final=sf.join(sf_total,on=callerIdCol, how='inner')
     sf_final['VolumeProportion']=sf_final['LocTotal']/sf_final['OverallTotal']
+    print sf_final['VolumeProportion'].sketch_summary()
+    sf_final.export_csv('Location_Diversity_Debug.csv')
+    #sys.exit(0)
     sf_final['log_VolumeProportion']=sf_final['VolumeProportion'].apply(lambda x:math.log(x))
     sf_final['Product_Proportion_log_VolumeProportion']=sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
     sf_loc_diversity=sf_final.groupby([callerIdCol],{'loc_diversity_numerator':gl.aggregate.SUM('Product_Proportion_log_VolumeProportion'),'UniqueCells':gl.aggregate.COUNT_DISTINCT('Loc')})
     sf_loc_diversity['Denominator']=sf_loc_diversity['UniqueCells'].apply(lambda x:math.log(float(x)))
-    print sf_loc_diversity['Denominator'].sketch_summary()
+    #print sf_loc_diversity['Denominator'].sketch_summary()
     #sf_user=gl.SFrame.read_csv(UserFile, delimiter='\t')[[callerIdCol]]
     #sf_loc_diversity=sf_loc_diversity.join(sf_user, on=callerIdCol, how='inner')
     sf_loc_diversity['loc_diversity']=-sf_loc_diversity['loc_diversity_numerator']/(sf_loc_diversity['Denominator']+1.0)# Total No of possibel cells
