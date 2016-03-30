@@ -1,1 +1,2 @@
 python  split_males_females_df.py gsm_sms_features.csv
+python  split_males_females_df.py gsm_sms_features_filterCall_g2.csv

@@ -1,5 +1,7 @@
 import pandas as pd
-def merge_files_demographics(male_file, female_file,working_male_file,working_female_file,modal_file,demographics_df ):
+import argparse
+import csv
+def merge_files_demographics(male_file, female_file,working_male_file,working_female_file,modal_file,demographics_df, prefix='' ):
     
     male_df=pd.read_csv(male_file).reset_index()
     male_df.columns=['Male_'+each  if 'CallerId' not in each else each for each in male_df.columns]
@@ -24,38 +26,52 @@ def merge_files_demographics(male_file, female_file,working_male_file,working_fe
     # Overall
     
     dfs_list['overall']=merged_df.copy()
-    merged_df.to_csv('Provincial/Overall.csv')
+    merged_df.to_csv('Provincial/'+prefix+'Overall.csv')
     for prov in ['Punjab','Sindh','Balochistan','KP','AJK','FATA']:
         print '*********', prov
         prov_df=merged_df[merged_df.Province==prov].copy()
         dfs_list[prov]=prov_df
-        prov_df.to_csv('Provincial/'+prov+'.csv')
+        prov_df.to_csv('Provincial/'+prefix+prov+'.csv')
 #         print prov_df.describe()
     #Urban
     urban_df=merged_df[merged_df.UrbanProportion>25].copy()
     dfs_list['Urban']=urban_df
-    urban_df.to_csv('Provincial/Urban.csv')
+    urban_df.to_csv('Provincial/'+prefix+'Urban.csv')
     #Rural
     rural_df=merged_df[merged_df.UrbanProportion<=25].copy()
     dfs_list['Rural']=rural_df
-    rural_df.to_csv('Provincial/Rural.csv')
+    rural_df.to_csv('Provincial/'+prefix+'Rural.csv')
     print len(dfs_list)
     return dfs_list
 
 
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description='Split data on the basis of Province and Urban Density')
+    parser.add_argument('-df','--demographics_file',required=True)
+    parser.add_argument('-udf','--urban_density_file',required=True)
+    parser.add_argument('-mf','--males_file',required=True)
+    parser.add_argument('-ff','--females_file',required=True)
+    parser.add_argument('-wmf','--working_males_file',required=True)
+    parser.add_argument('-wff','--working_females_file',required=True)
+    parser.add_argument('-of','--output_file_prefix',required=False)
+    args=parser.parse_args()
+    
 
-df_demographics=pd.read_csv('../data/Demographics.csv')[['District','Province']]
-df_UrbanDensity=pd.read_csv('../data/UrbanProportion.csv')
+    
+    df_demographics=pd.read_csv(args.demographics_file)[['District','Province']]
+    df_UrbanDensity=pd.read_csv(args.urban_density_file)
 
-merged_df=pd.merge(df_demographics, df_UrbanDensity, on='District')[['District', 'Province', 'UrbanProportion']]
-print merged_df.head()
+    merged_df=pd.merge(df_demographics, df_UrbanDensity, on='District')[['District', 'Province', 'UrbanProportion']]
+    print merged_df.head()
 
-
-dfs_list=merge_files_demographics(male_file='Males_gsm_sms_features.csv',
-                                      working_male_file='WorkingMales_gsm_sms_features.csv',
-                                      working_female_file='WorkingFemales_gsm_sms_features.csv',
-                                      female_file='Females_gsm_sms_features.csv',
-                                      modal_file='../data/ModalDistrict.csv',
-                                       demographics_df=merged_df)
+    prefix=''
+    if args.output_file_prefix is not None:
+        prefix=args.output_file_prefix
+    dfs_list=merge_files_demographics(male_file=args.males_file,
+                                      working_male_file=args.working_males_file,
+                                      working_female_file=args.working_females_file,
+                                      female_file=args.females_file,
+                                      modal_file=args.males_file,
+                                       demographics_df=merged_df,prefix=prefix)
 
 
