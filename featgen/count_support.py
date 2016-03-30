@@ -60,7 +60,7 @@ def write_output(filename, support_nodes_dict, degree_dict):
 	## Subscriber, Degree, Support Nodes Count, Support Nodes List
 	
 	with open(filename,'w') as fout:
-		fout.write('SubscriberId,Degree,SupportCount,SupportNodes\n')
+		fout.write('CallerId,Degree,SupportCount,SupportNodes\n')
 		for node in support_nodes_dict:	
 			fout.write('1046'+str(node).zfill(8)+','+str(degree_dict[node])+','+str(len(support_nodes_dict[node]))+','+'_'.join('1046'+str(each).zfill(8) for each in support_nodes_dict[node])+'\n')
 

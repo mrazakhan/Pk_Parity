@@ -5,11 +5,14 @@ import csv
 
 # Read SF, Make A Copy, Transpose A and B
 
-def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_file_top2, age_diversity_file_top4, gender_diversity_file,gender_diversity_file_top2, gender_diversity_file_top4,  location_diversity_file, topological_diversity_file,embeddedness_file, constraints_file,bw_centrality_file, gender_homophily_file, age_homophily_file, working_status_file,  modal_districts_file,profile_file, output_file):
+def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_file_top2, age_diversity_file_top4, gender_diversity_file,gender_diversity_file_top2, gender_diversity_file_top4,  location_diversity_file, topological_diversity_file,embeddedness_file, constraints_file,bw_centrality_file, gender_homophily_file,age_homophily_file, georeach_file, support_file, rog_file,  working_status_file,  modal_districts_file,profile_file, output_file):
     sf_degree=gl.SFrame.read_csv(degree_file)[['CallerId','Degree']]
     sf_gender_homophily=gl.SFrame.read_csv(gender_homophily_file)[['CallerId','homophily_calls','homophily_net']].rename({'homophily_calls':'gender_homophily_calls','homophily_net':'gender_homophily_net'})	
     sf_age_homophily=gl.SFrame.read_csv(age_homophily_file)[['CallerId','homophily_calls','homophily_net']].rename({'homophily_calls':'age_homophily_calls','homophily_net':'age_homophily_net'})	
     sf_bw_centrality=gl.SFrame.read_csv(bw_centrality_file)[['CallerId','Bw_Centrality']]
+    sf_support=gl.SFrame.read_csv(support_file)[['CallerId','SupportCount']]
+    sf_rog=gl.SFrame.read_csv(rog_file)[['CallerId','rog']]
+    sf_georeach=gl.SFrame.read_csv(georeach_file)[['CallerId','AvgGeoReach']]
     sf_volume=gl.SFrame.read_csv(volume_file)[['CallerId','Count']]
     sf_working=gl.SFrame.read_csv(working_status_file)[['CallerId','WorkingStatus']]
     sf_age=gl.SFrame.read_csv(age_diversity_file)[['CallerId','age_diversity']]
@@ -23,11 +26,11 @@ def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_fil
     sf_topology=gl.SFrame.read_csv(topological_diversity_file)[['CallerId','topological_diversity']]
     sf_embeddedness=gl.SFrame.read_csv(embeddedness_file)[['CallerId','Embeddedness']]
     sf_constraints=gl.SFrame.read_csv(constraints_file)[['CallerId','Constraints']]
-    sf_modal=gl.SFrame.read_csv(modal_districts_file).rename({'MostFrequent':'ModalDistrict'})
+    sf_modal=gl.SFrame.read_csv(modal_districts_file)#.rename({'MostFrequent':'ModalDistrict'})
     sf_profile=gl.SFrame.read_csv(profile_file, delimiter='\t')[['msisdn','gend']].rename({'msisdn':'CallerId','gend':'gender'})
     sf_merged=sf_degree
     print ' Shape of the merged frame after merging {} is {}'.format( 'degree', sf_degree.shape)
-    sframes_dict={'volume':sf_volume,'working':sf_working, 'age':sf_age,'age2':sf_age2, 'age4':sf_age4,  'gender':sf_gender,'gender2':sf_gender2, 'gender4':sf_gender4, 'location':sf_location, 'topology':sf_topology, 'embeddedness':sf_embeddedness, 'constraints':sf_constraints,'bw_centrality':sf_bw_centrality,'gender_homophily':sf_gender_homophily,'age_homophily':sf_age_homophily}
+    sframes_dict={'volume':sf_volume,'working':sf_working, 'age':sf_age,'age2':sf_age2, 'age4':sf_age4,  'gender':sf_gender,'gender2':sf_gender2, 'gender4':sf_gender4, 'location':sf_location, 'topology':sf_topology, 'embeddedness':sf_embeddedness, 'constraints':sf_constraints,'bw_centrality':sf_bw_centrality,'gender_homophily':sf_gender_homophily,'age_homophily':sf_age_homophily,'support':sf_support, 'rog':sf_rog,'georeach':sf_georeach}
 
     for key in sframes_dict.keys():
         sf_merged=sf_merged.join(sframes_dict[key], on='CallerId', how='left')
@@ -43,6 +46,7 @@ def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_fil
 
 
     sf_merged.export_csv(output_file, quote_level=csv.QUOTE_NONE)
+    sf_merged.filter_by(0, 'Count',exclude=True).filter_by(1, 'Count',exclude=True).export_csv(output_file.split('.')[0]+'_filterCall_g2.csv',quote_level=csv.QUOTE_NONE)
 
 
 if __name__=='__main__':
@@ -66,6 +70,9 @@ if __name__=='__main__':
     parser.add_argument('-mf','--modal_districts_file',help='Modal Districts File', required=True)
     parser.add_argument('-pf','--profile_file',help='Profile File', required=True)
     parser.add_argument('-of','--output_file',help='Output File', required=True)
+    parser.add_argument('-grdf','--georeach_file',help='Output File', required=True)
+    parser.add_argument('-sdf','--support_file',help='Output File', required=True)
+    parser.add_argument('-rdf','--rog_file',help='Output File', required=True)
 
     args=parser.parse_args()
-    merge_features(args.degree_file,args.volume_file, args.age_diversity_file,args.age_diversity_file_top2, args.age_diversity_file_top4, args.gender_diversity_file,args.gender_diversity_file_top2, args.gender_diversity_file_top4, args.location_diversity_file, args.topological_diversity_file,args.embeddedness_file, args.constraints_file,args.bw_centrality_file,args.gender_homophily_file, args.age_homophily_file,args.working_status_file,args.modal_districts_file,args.profile_file, args.output_file)
+    merge_features(args.degree_file,args.volume_file, args.age_diversity_file,args.age_diversity_file_top2, args.age_diversity_file_top4, args.gender_diversity_file,args.gender_diversity_file_top2, args.gender_diversity_file_top4, args.location_diversity_file, args.topological_diversity_file,args.embeddedness_file, args.constraints_file,args.bw_centrality_file,args.gender_homophily_file, args.age_homophily_file,args.georeach_file, args.support_file, args.rog_file,args.working_status_file,args.modal_districts_file,args.profile_file, args.output_file)
