@@ -3,6 +3,7 @@ import math
 import argparse
 import csv
 from collections import Counter
+from datetime import datetime
 
 # Read SF, Make A Copy, Transpose A and B
 
@@ -27,6 +28,17 @@ def checkDayNight(x):
 	else:
 		return 0
 
+def IsWeekend(x):
+    ret=0
+    try:
+        dt=datetime.strptime(x.split(' ')[0],'%Y-%m-%d')
+        if dt.isoweekday() in range(1, 6):
+            ret=1
+    except:
+        pass
+
+    return ret
+
 def working_status(input_file,profile_file, output_file,dateTimeCol, callerIdCol, receiverIdCol,callerCellCol,receiverCellCol):
     sf_gender=gl.SFrame.read_csv(profile_file,delimiter='\t')
     print sf_gender.head()
@@ -45,6 +57,13 @@ def working_status(input_file,profile_file, output_file,dateTimeCol, callerIdCol
     sf2.shape
     sf.shape
     sf.head()
+
+    #Filtering the weekends
+    print 'Shape of the overall data', sf.shape
+    sf['Weekend']=sf[dateTimeCol].apply(lambda x:IsWeekend(x))
+    sf=sf.filter_by(0,'Weekend')
+    print 'Shape after filtering weekend data', sf.shape
+
     sf=sf[[dateTimeCol,callerIdCol, callerCellCol]].dropna()
     sf.rename({callerCellCol:'Loc'})
     print 'Shape before removing empty strings from the Loc column', sf.shape
