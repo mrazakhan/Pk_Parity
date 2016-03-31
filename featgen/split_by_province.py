@@ -50,6 +50,7 @@ if __name__=='__main__':
     parser.add_argument('-df','--demographics_file',required=True)
     parser.add_argument('-udf','--urban_density_file',required=True)
     parser.add_argument('-mf','--males_file',required=True)
+    parser.add_argument('-modf','--modal_file',required=True)
     parser.add_argument('-ff','--females_file',required=True)
     parser.add_argument('-wmf','--working_males_file',required=True)
     parser.add_argument('-wff','--working_females_file',required=True)
@@ -71,7 +72,7 @@ if __name__=='__main__':
                                       working_male_file=args.working_males_file,
                                       working_female_file=args.working_females_file,
                                       female_file=args.females_file,
-                                      modal_file=args.males_file,
+                                      modal_file=args.modal_file,
                                        demographics_df=merged_df,prefix=prefix)
 
 

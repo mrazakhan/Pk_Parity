@@ -28,14 +28,15 @@ def topological_diversity(input_file, output_file, callerIdCol, receiverIdCol):
     sf_overall=sf_overall.join(sf_total, on=callerIdCol,how='outer')
     sf_merged=sf.join(sf_overall, how='inner', on=callerIdCol)
     sf_degree=sf.groupby([callerIdCol],{'Degree':gl.aggregate.COUNT_DISTINCT(receiverIdCol)})
-    sf_merged2=sf_merged.join(sf_degree, how ='inner', on=callerIdCol)
+    sf_merged2=sf_overall.join(sf_degree, how ='inner', on=callerIdCol)
+    #sf_merged2=sf_merged.join(sf_degree, how ='inner', on=callerIdCol)
     sf_merged2['VolumeProportion']=sf_merged2['Total']/sf_merged2['OverallTotal']
     sf_merged2['log_VolumeProportion']=sf_merged2['VolumeProportion'].apply(lambda x:math.log(x))
-    sf_merged2['Product_Proportion_log_VolumeProportion']=sf_merged2['VolumeProportion']*sf_merged2['log_VolumeProportion']
+    sf_merged2['Product_Proportion_log_VolumeProportion']=-sf_merged2['VolumeProportion']*sf_merged2['log_VolumeProportion']
     sf_numerator=sf_merged2.groupby(callerIdCol,{'topological_diversity_numerator':gl.aggregate.SUM('Product_Proportion_log_VolumeProportion')})
     sf_merged3=sf_merged2.join(sf_numerator, on=callerIdCol, how='inner')
     sf_merged3['topological_diversity_denominator']=sf_merged3['Degree'].apply(lambda x:math.log(x))
-    sf_merged3['topological_diversity']=-sf_merged3['topological_diversity_numerator']/(sf_merged3['topological_diversity_denominator']+1.0)
+    sf_merged3['topological_diversity']=sf_merged3['topological_diversity_numerator']/(sf_merged3['topological_diversity_denominator']+1.0)
     sf_merged3=sf_merged3[[callerIdCol,'topological_diversity']].unique()
     sf_merged3.export_csv(output_file,quote_level=csv.QUOTE_NONE)
 

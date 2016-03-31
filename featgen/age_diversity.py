@@ -48,7 +48,7 @@ def age_diversity(input_file,profile_file, output_file, callerIdCol, receiverIdC
 
     sf_final['log_VolumeProportion']=sf_final['VolumeProportion'].apply(lambda x:math.log(x))
 
-    sf_final['Product_Proportion_log_VolumeProportion']=sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
+    sf_final['Product_Proportion_log_VolumeProportion']=-sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
 
     sf_numerator=sf_final.groupby(callerIdCol,{'age_diversity_numerator':gl.aggregate.SUM('Product_Proportion_log_VolumeProportion')})
 
@@ -56,7 +56,7 @@ def age_diversity(input_file,profile_file, output_file, callerIdCol, receiverIdC
 
     sf_age_diversity['age_denominator']=sf_age_diversity['UniqueAgeGroups'].apply(lambda x:math.log(x))
 
-    sf_age_diversity['age_diversity']=-sf_age_diversity['age_diversity_numerator']/(sf_age_diversity['age_denominator']+1.0)
+    sf_age_diversity['age_diversity']=sf_age_diversity['age_diversity_numerator']/(sf_age_diversity['age_denominator']+1.0)
 
     sf_age_diversity=sf_age_diversity.unique()
     sf_age_diversity.export_csv(output_file, quote_level=csv.QUOTE_NONE)

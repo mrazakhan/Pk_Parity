@@ -40,11 +40,11 @@ def gender_diversity(input_file,profile_file, output_file, callerIdCol, receiver
         sf_final=sf_gender_overall.join(sf_total,on=callerIdCol, how='inner')
         sf_final['VolumeProportion']=sf_final['GenderTotal']/sf_final['OverallTotal']
         sf_final['log_VolumeProportion']=sf_final['VolumeProportion'].apply(lambda x:math.log(x))
-        sf_final['Product_Proportion_log_VolumeProportion']=sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
+        sf_final['Product_Proportion_log_VolumeProportion']=-sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
         sf_numerator=sf_final.groupby(callerIdCol,{'gender_diversity_numerator':gl.aggregate.SUM('Product_Proportion_log_VolumeProportion')})
         sf_gender_diversity=sf_final.join(sf_numerator,on=callerIdCol, how='inner')[[callerIdCol,'gender_diversity_numerator','UniqueBPartyGender']]
         sf_gender_diversity['denominator']=sf_gender_diversity['UniqueBPartyGender'].apply(lambda x:math.log(x))
-        sf_gender_diversity['gender_diversity']=-sf_gender_diversity['gender_diversity_numerator']/(sf_gender_diversity['denominator']+1.0)
+        sf_gender_diversity['gender_diversity']=sf_gender_diversity['gender_diversity_numerator']/(sf_gender_diversity['denominator']+1.0)
         sf_gender_diversity=sf_gender_diversity.unique()
         sf_gender_diversity.export_csv('Top'+str(k)+'_'+output_file,quote_level=csv.QUOTE_NONE)
 

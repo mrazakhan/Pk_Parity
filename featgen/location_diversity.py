@@ -37,13 +37,13 @@ def location_diversity(input_file, output_file, callerIdCol, receiverIdCol, call
     sf_final.export_csv('Location_Diversity_Debug.csv')
     #sys.exit(0)
     sf_final['log_VolumeProportion']=sf_final['VolumeProportion'].apply(lambda x:math.log(x))
-    sf_final['Product_Proportion_log_VolumeProportion']=sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
+    sf_final['Product_Proportion_log_VolumeProportion']=-sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
     sf_loc_diversity=sf_final.groupby([callerIdCol],{'loc_diversity_numerator':gl.aggregate.SUM('Product_Proportion_log_VolumeProportion'),'UniqueCells':gl.aggregate.COUNT_DISTINCT('Loc')})
     sf_loc_diversity['Denominator']=sf_loc_diversity['UniqueCells'].apply(lambda x:math.log(float(x)))
     #print sf_loc_diversity['Denominator'].sketch_summary()
     #sf_user=gl.SFrame.read_csv(UserFile, delimiter='\t')[[callerIdCol]]
     #sf_loc_diversity=sf_loc_diversity.join(sf_user, on=callerIdCol, how='inner')
-    sf_loc_diversity['loc_diversity']=-sf_loc_diversity['loc_diversity_numerator']/(sf_loc_diversity['Denominator']+1.0)# Total No of possibel cells
+    sf_loc_diversity['loc_diversity']=sf_loc_diversity['loc_diversity_numerator']/(sf_loc_diversity['Denominator']+1.0)# Total No of possibel cells
     sf_loc_diversity.export_csv('Test_Loc_Diversity.csv', quote_level=csv.QUOTE_NONE)
     sf=sf_loc_diversity[[callerIdCol,'loc_diversity']].unique()
     sf.export_csv(output_file,quote_level=csv.QUOTE_NONE)

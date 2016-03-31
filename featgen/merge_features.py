@@ -10,7 +10,9 @@ def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_fil
     sf_gender_homophily=gl.SFrame.read_csv(gender_homophily_file)[['CallerId','homophily_calls','homophily_net']].rename({'homophily_calls':'gender_homophily_calls','homophily_net':'gender_homophily_net'})	
     sf_age_homophily=gl.SFrame.read_csv(age_homophily_file)[['CallerId','homophily_calls','homophily_net']].rename({'homophily_calls':'age_homophily_calls','homophily_net':'age_homophily_net'})	
     sf_bw_centrality=gl.SFrame.read_csv(bw_centrality_file)[['CallerId','Bw_Centrality']]
-    sf_support=gl.SFrame.read_csv(support_file)[['CallerId','SupportCount']]
+    sf_support=gl.SFrame.read_csv(support_file)[['CallerId','SupportCount','Degree']]
+    sf_support['Support']=sf_support['SupportCount']/sf_support['Degree']
+    sf_support=sf_support[['CallerId','Support']]
     sf_rog=gl.SFrame.read_csv(rog_file)[['CallerId','rog']]
     sf_georeach=gl.SFrame.read_csv(georeach_file)[['CallerId','AvgGeoReach']]
     sf_volume=gl.SFrame.read_csv(volume_file)[['CallerId','Count']]

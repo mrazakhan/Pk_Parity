@@ -24,7 +24,7 @@ def merge_features_demographics(features_file, demographics_file, output_file):
 	
 	merged_df['Voters_Overall']=merged_df['Voters_Male']+merged_df['Voters_Female']
 	merged_df['Census_Overall']=merged_df['Census_Male']+merged_df['Census_Female']
-	for col in ['Age_Div','Degree','Volume','Gender_Div','Loc_Div','Net_Div','UsersCount','Voters','Census','Constraints','Embeddedness','Top2_Age_Div','Top4_Age_Div','Top4_Gender_Div','Top2_Gender_Div']:
+	for col in ['Age_Div','Degree','Volume','Gender_Div','Loc_Div','Net_Div','UsersCount','Voters','Census','Constraints','Embeddedness','Top2_Age_Div','Top4_Age_Div','Top4_Gender_Div','Top2_Gender_Div','Gender_Homophily_Calls','Age_Homophily_Calls','Gender_Homophily_Net','Age_Homophily_Net']:
 		if col in ['UsersCount','Voters','Census']:
 			merged_df['Ratio_'+col]=merged_df[col+'_Female']/merged_df[col+'_Male']
 			merged_df['Proportion_'+col]=merged_df[col+'_Female']/merged_df[col+'_Overall']
