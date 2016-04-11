@@ -18,15 +18,17 @@ def extract_femalesonly_alter(profile_file,sf_orig,callerIdCol,receiverIdCol):
     print sf_gender.head()
     sf_gender.rename({'msisdn':receiverIdCol})
     sf_gender=sf_gender[[receiverIdCol,'gend']]
-    print sf_gender['gend'].sketch_summary()
+    print 'sf_gender*************'
+    print sf_gender.head()
     sf_gender=sf_gender.filter_by(0, 'gend')
-    print 'Profile SF shape after filtering females only'
+    print 'sf_orig*********',
+    print sf_orig.head() 
     sf3=sf_gender.join(sf_orig, on=receiverIdCol)
     return sf3
 
 
 def triads_calculation(data,input_file, callerIdCol, receiverIdCol, outputFile):
-
+	data=data.copy()
 	#data=graphlab.SFrame.read_csv(input_file, delimiter=',')
 	data.rename({callerIdCol:'__src_id',receiverIdCol:'__dst_id'})
 
@@ -57,9 +59,9 @@ if __name__=='__main__':
 
     args=parser.parse_args()
     data=convert_to_undirected(args.input_file,args.callerIdCol, args.receiverIdCol)
-    print '**************************'
-    print data.head()
     triads_calculation(data,args.input_file, args.callerIdCol, args.receiverIdCol,args.output_file)
+    #print '**************************'
+    #print data.head()
     female_sf=extract_femalesonly_alter(args.profile_file,data,args.callerIdCol,args.receiverIdCol)
     triads_calculation(female_sf,args.input_file, args.callerIdCol, args.receiverIdCol,'Females_Alter_'+args.output_file)
 

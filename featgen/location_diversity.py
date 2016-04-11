@@ -23,9 +23,9 @@ def extract_femalesonly_alter(profile_file,sf_orig,callerIdCol,receiverIdCol):
     sf3=sf_gender.join(sf_orig, on=receiverIdCol)
     return sf3
 
-def location_diversity(sf,input_file, output_file, callerIdCol, receiverIdCol, callerCellCol, receiverCellCol):
-
-    sf=sf[[callerIdCol, callerCellCol]].dropna()
+def location_diversity(sf2,input_file, output_file, callerIdCol, receiverIdCol, callerCellCol, receiverCellCol):
+   
+    sf=sf2[[callerIdCol, callerCellCol]].dropna()
     sf.rename({callerCellCol:'Loc'})
     print 'Shape before filtering missing towers', sf.shape
     sf1=sf.filter_by('', 'Loc', exclude=True)
@@ -38,7 +38,7 @@ def location_diversity(sf,input_file, output_file, callerIdCol, receiverIdCol, c
     sf_final=sf.join(sf_total,on=callerIdCol, how='inner')
     sf_final['VolumeProportion']=sf_final['LocTotal']/sf_final['OverallTotal']
     print sf_final['VolumeProportion'].sketch_summary()
-    sf_final.export_csv('Location_Diversity_Debug.csv')
+    #sf_final.export_csv('Location_Diversity_Debug.csv')
     #sys.exit(0)
     sf_final['log_VolumeProportion']=sf_final['VolumeProportion'].apply(lambda x:math.log(x))
     sf_final['Product_Proportion_log_VolumeProportion']=-sf_final['VolumeProportion']*sf_final['log_VolumeProportion']
