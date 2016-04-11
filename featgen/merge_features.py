@@ -3,9 +3,8 @@ import math
 import argparse
 import csv
 
-# Read SF, Make A Copy, Transpose A and B
 
-def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_file_top2, age_diversity_file_top4, gender_diversity_file,gender_diversity_file_top2, gender_diversity_file_top4,  location_diversity_file, topological_diversity_file,embeddedness_file, constraints_file,bw_centrality_file, gender_homophily_file,age_homophily_file, georeach_file, support_file, rog_file,  working_status_file,  modal_districts_file,profile_file, output_file):
+def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_file_top2, age_diversity_file_top4, gender_diversity_file,gender_diversity_file_top2, gender_diversity_file_top4,  location_diversity_file, topological_diversity_file,triads_file, constraints_file,bw_centrality_file, gender_homophily_file,age_homophily_file, georeach_file, support_file, rog_file,  working_status_file,  modal_districts_file,profile_file, output_file):
     sf_degree=gl.SFrame.read_csv(degree_file)[['CallerId','Degree']]
     sf_gender_homophily=gl.SFrame.read_csv(gender_homophily_file)[['CallerId','homophily_calls','homophily_net']].rename({'homophily_calls':'gender_homophily_calls','homophily_net':'gender_homophily_net'})	
     sf_age_homophily=gl.SFrame.read_csv(age_homophily_file)[['CallerId','homophily_calls','homophily_net']].rename({'homophily_calls':'age_homophily_calls','homophily_net':'age_homophily_net'})	
@@ -26,7 +25,7 @@ def merge_features(degree_file,volume_file, age_diversity_file,age_diversity_fil
 
     sf_location=gl.SFrame.read_csv(location_diversity_file)[['CallerId','loc_diversity']]
     sf_topology=gl.SFrame.read_csv(topological_diversity_file)[['CallerId','topological_diversity']]
-    sf_embeddedness=gl.SFrame.read_csv(embeddedness_file)[['CallerId','Embeddedness']]
+    sf_triads=gl.SFrame.read_csv(embeddedness_file)[['triangle_count,total_degree,embeddedness,SubscriberId']].rename({'SubscriberId':'CallerId'})
     sf_constraints=gl.SFrame.read_csv(constraints_file)[['CallerId','Constraints']]
     sf_modal=gl.SFrame.read_csv(modal_districts_file)#.rename({'MostFrequent':'ModalDistrict'})
     sf_profile=gl.SFrame.read_csv(profile_file, delimiter='\t')[['msisdn','gend']].rename({'msisdn':'CallerId','gend':'gender'})
@@ -59,7 +58,7 @@ if __name__=='__main__':
     parser.add_argument('-ghdf','--gender_homophily_file',help='Gender Homophily File', required=True)
     parser.add_argument('-ahdf','--age_homophily_file',help='Age Homophily File', required=True)
     parser.add_argument('-bcdf','--bw_centrality_file',help='BW Centrality File', required=True)
-    parser.add_argument('-edf','--embeddedness_file',help='Embeddedness File', required=True)
+    parser.add_argument('-tdf','--triads_file',help='Triads File', required=True)
     parser.add_argument('-cdf','--constraints_file',help='Constraints File', required=True)
     parser.add_argument('-adf','--age_diversity_file',help='Age Diversity File', required=True)
     parser.add_argument('-adf2','--age_diversity_file_top2',help='Age Diversity File Top 2 Friends', required=True)
@@ -77,4 +76,4 @@ if __name__=='__main__':
     parser.add_argument('-rdf','--rog_file',help='Output File', required=True)
 
     args=parser.parse_args()
-    merge_features(args.degree_file,args.volume_file, args.age_diversity_file,args.age_diversity_file_top2, args.age_diversity_file_top4, args.gender_diversity_file,args.gender_diversity_file_top2, args.gender_diversity_file_top4, args.location_diversity_file, args.topological_diversity_file,args.embeddedness_file, args.constraints_file,args.bw_centrality_file,args.gender_homophily_file, args.age_homophily_file,args.georeach_file, args.support_file, args.rog_file,args.working_status_file,args.modal_districts_file,args.profile_file, args.output_file)
+    merge_features(args.degree_file,args.volume_file, args.age_diversity_file,args.age_diversity_file_top2, args.age_diversity_file_top4, args.gender_diversity_file,args.gender_diversity_file_top2, args.gender_diversity_file_top4, args.location_diversity_file, args.topological_diversity_file,args.triads_file, args.constraints_file,args.bw_centrality_file,args.gender_homophily_file, args.age_homophily_file,args.georeach_file, args.support_file, args.rog_file,args.working_status_file,args.modal_districts_file,args.profile_file, args.output_file)

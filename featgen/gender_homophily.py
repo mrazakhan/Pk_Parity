@@ -54,5 +54,5 @@ if __name__=='__main__':
     sf_orig=convert_to_undirected(args.input_file,args.callerIdCol, args.receiverIdCol)    
     gender_homophily(sf_orig,args.input_file,args.profile_file, args.output_file, args.callerIdCol, args.receiverIdCol)
     sf_females=extract_femalesonly_alter(args.profile_file, sf_orig, args.callerIdCol, args.receiverIdCol)
-    gender_homophily(sf_orig,args.input_file,args.profile_file, args.output_file, args.callerIdCol, args.receiverIdCol)
+    gender_homophily(sf_orig,args.input_file,args.profile_file, 'Females_Alter_'+args.output_file, args.callerIdCol, args.receiverIdCol)
 

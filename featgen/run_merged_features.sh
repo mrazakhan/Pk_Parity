@@ -1,8 +1,21 @@
 
-#python merge_features.py -df bidir_gsm_degree.csv -vf bidir_gsm_volume.csv -adf bidir_gsm_age_diversity.csv -gdf bidir_gsm_gender_diversity.csv -ldf bidir_gsm_location_diversity.csv -tdf bidir_gsm_topological_diversity.csv -of bidir_gsm_features.csv -mf ../data/ModalDistrict.csv -pf ../data/profile_info.txt
-
-#python merge_features.py -df bidir_gsm_sms_degree.csv -vf bidir_gsm_sms_volume.csv -adf bidir_gsm_sms_age_diversity.csv -gdf bidir_gsm_sms_gender_diversity.csv -ldf bidir_gsm_sms_location_diversity.csv -tdf bidir_gsm_sms_topological_diversity.csv -of bidir_gsm_sms_features.csv -mf ../data/ModalDistrict.csv -pf ../data/profile_info.txt
-
-#python merge_features.py -df gsm_degree.csv -vf gsm_volume.csv -adf gsm_age_diversity.csv -gdf gsm_gender_diversity.csv -ldf gsm_location_diversity.csv -tdf gsm_topological_diversity.csv -of gsm_features.csv -mf ../data/ModalDistrict.csv -pf ../data/profile_info.txt
-
-python merge_features.py -df gsm_sms_degree.csv -vf gsm_sms_volume.csv -adf gsm_sms_age_diversity.csv -gdf gsm_sms_gender_diversity.csv -ldf gsm_sms_location_diversity.csv -tdf gsm_sms_topological_diversity.csv -of gsm_sms_features.csv -mf ../data/ModalDistrict.csv -pf ../data/profile_info.txt -adf2 Top2_gsm_sms_age_diversity.csv -adf4 Top4_gsm_sms_age_diversity.csv -gdf2 Top2_gsm_sms_gender_diversity.csv -gdf4 Top4_gsm_sms_gender_diversity.csv -edf gsm_sms_triads.csv -cdf gsm_sms_constraints.csv -wf gsm_sms_gender_work_status.csv -bcdf gsm_sms_bc.csv -ahdf gsm_sms_age_homophily.csv -ghdf gsm_sms_gender_homophily.csv -sdf gsm_sms_support.csv -rdf gsm_sms_rog.csv -grdf gsm_sms_geo_reach.csv
+python merge_features.py -df gsm_sms_degree.csv -dff Females_Alter_gsm_sms_degree.csv \
+	-vf gsm_sms_volume.csv -vff Females_Alter_gsm_sms_volume.csv \
+	-adf gsm_sms_age_diversity.csv -adff Females_Alter_gsm_sms_age_diversity.csv \
+	-gdf gsm_sms_gender_diversity.csv -gdff Females_Alter_gsm_sms_gender_diversity.csv \
+	-ldf gsm_sms_location_diversity.csv -ldff Females_Alter_gsm_sms_location_diversity.csv \
+	-tdf gsm_sms_topological_diversity.csv -tdff Females_Alter_gsm_sms_topological_diversity.csv \
+	-adf2 Top2_gsm_sms_age_diversity.csv -adf4 Top4_gsm_sms_age_diversity.csv \
+	-gdf2 Top2_gsm_sms_gender_diversity.csv -gdf4 Top4_gsm_sms_gender_diversity.csv \
+	-tdf gsm_sms_triads.csv -tdff Females_Alter_gsm_sms_topological_diversity.csv  \ 
+	-cdf gsm_sms_constraints.csv -cdff ./gsm_sms_constraint_falter.csv\
+	-bcdf gsm_sms_bc.csv -bcdff ./gsm_sms_bc_falter.csv\
+	-ahdf gsm_sms_age_homophily.csv -ahdff Females_Alter_gsm_sms_age_homophily.csv\
+	-ghdf gsm_sms_gender_homophily.csv -ghdff Females_Alter_gsm_sms_gender_homophily.csv\
+	-sdf gsm_sms_support.csv  -sdff ./gsm_sms_support_falter.csv \
+	-rdf gsm_sms_rog.csv \
+	-grdf gsm_sms_geo_reach.csv -grdff Females_Alter_gsm_sms_geo_reach.csv \
+	-wf gsm_sms_gender_work_status.csv \
+	-mf ../data/ModalDistrict.csv \
+	-pf ../data/profile_info.txt \
+	-of gsm_sms_features.csv 
