@@ -59,7 +59,7 @@ if __name__=='__main__':
     parser.add_argument('-rc','--receiverIdCol',help='ReceiverIdCol', required=True)
 
     args=parser.parse_args()
-    sf=convert_to_undirected(args.input_file, args.CallerIdCol, args.receiverIdCol)
+    sf=convert_to_undirected(args.input_file, args.callerIdCol, args.receiverIdCol)
     age_homophily(sf,args.profile_file, args.output_file, args.callerIdCol, args.receiverIdCol)
     sf_females=extract_femalesonly_alter(args.profile_file,sf,args.callerIdCol,args.receiverIdCol)
     age_homophily(sf_females,args.profile_file, 'Females_Alter_'+args.output_file, args.callerIdCol, args.receiverIdCol)
