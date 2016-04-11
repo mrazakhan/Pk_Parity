@@ -4,23 +4,27 @@ import argparse
 import csv
 import sys
 # Read SF, Make A Copy, Transpose A and B
-
-def location_diversity(input_file, output_file, callerIdCol, receiverIdCol, callerCellCol, receiverCellCol):
-
+def convert_to_undirected(input_file, callerIdCol, receiverIdCol):
     sf1=gl.SFrame.read_csv(input_file)
-    sf1.head()
     sf2=sf1.copy()
-    sf2.head()
     sf2=sf2.rename({callerIdCol:'B1',receiverIdCol:'A1'})
-    sf2=sf2.rename({callerCellCol:'B1Cell',receiverCellCol:'A1Cell'})
     sf2=sf2.rename({'A1':callerIdCol,'B1':receiverIdCol})
-    sf2=sf2.rename({'A1Cell':callerCellCol,'B1Cell':receiverCellCol})
-    sf2.head()
     sf=sf1.append(sf2)
-    sf1.shape
-    sf2.shape
-    sf.shape
-    sf.head()
+    return sf
+
+def extract_femalesonly_alter(profile_file,sf_orig,callerIdCol,receiverIdCol):
+    sf_gender=gl.SFrame.read_csv(profile_file,delimiter='\t')
+    print sf_gender.head()
+    sf_gender.rename({'msisdn':receiverIdCol})
+    sf_gender=sf_gender[[receiverIdCol,'gend']]
+    print sf_gender['gend'].sketch_summary()
+    sf_gender=sf_gender.filter_by(0, 'gend')
+    print 'Profile SF shape after filtering females only'
+    sf3=sf_gender.join(sf_orig, on=receiverIdCol)
+    return sf3
+
+def location_diversity(sf,input_file, output_file, callerIdCol, receiverIdCol, callerCellCol, receiverCellCol):
+
     sf=sf[[callerIdCol, callerCellCol]].dropna()
     sf.rename({callerCellCol:'Loc'})
     print 'Shape before filtering missing towers', sf.shape
@@ -52,6 +56,7 @@ def location_diversity(input_file, output_file, callerIdCol, receiverIdCol, call
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description='Topological Diversity')
     parser.add_argument('-if','--input_file',help='Input File', required=True)
+    parser.add_argument('-pf','--profile_file',help='profile File', required=True)
     parser.add_argument('-of','--output_file',help='Output File', required=True)
     parser.add_argument('-cc','--callerIdCol',help='CallerIdCol', required=True)
     parser.add_argument('-rc','--receiverIdCol',help='ReceiverIdCol', required=True)
@@ -59,4 +64,7 @@ if __name__=='__main__':
     parser.add_argument('-rcc','--receiverCellCol',help='ReceiverCellCol', required=True)
 
     args=parser.parse_args()
-    location_diversity(args.input_file, args.output_file, args.callerIdCol, args.receiverIdCol, args.callerCellCol, args.receiverCellCol)
+    sf_undirected=convert_to_undirected(args.input_file, args.callerIdCol, args.receiverIdCol)
+    location_diversity(sf_undirected,args.input_file, args.output_file, args.callerIdCol, args.receiverIdCol, args.callerCellCol, args.receiverCellCol)
+    sf_females=extract_femalesonly_alter(args.profile_file,sf_undirected,args.callerIdCol,args.receiverIdCol)
+    location_diversity(sf_females,args.input_file, 'Females_Alter_'+args.output_file, args.callerIdCol, args.receiverIdCol, args.callerCellCol, args.receiverCellCol)

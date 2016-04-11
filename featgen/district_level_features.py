@@ -18,7 +18,8 @@ def merge_features(input_file,filter_file, output_file):
     'Top4_gender_diversity':'Top4_Gender_Div','age_diversity':'Age_Div','loc_diversity':'Loc_Div',\
     'Top4_age_diversity':'Top4_Age_Div','age_homophily_calls':'Age_Homophily_Calls',\
     'gender_homophily_calls':'Gender_Homophily_Calls','age_homophily_net':'Age_Homophily_Net',\
-    'gender_homophily_net':'Gender_Homophily_Net','Top2_age_diversity':'Top2_Age_Div','topological_diversity':'Net_Div'})
+    'gender_homophily_net':'Gender_Homophily_Net','Top2_age_diversity':'Top2_Age_Div','topological_diversity':'Net_Div',
+    'rog':'RadiusOfGyration'})
     sf_males=sf_input.filter_by(1,'gender')
     sf_females=sf_input.filter_by(0,'gender')
     sf_males.remove_column('gender')
@@ -26,11 +27,11 @@ def merge_features(input_file,filter_file, output_file):
     sf_overall=sf_males.append(sf_females)
     sframes_dict={'Male':sf_males, 'Female':sf_females,'Overall':sf_overall}
     out_sfs=[]
-    ops={'Working_Count':agg.SUM('WorkingStatus')}
     for key in sframes_dict:
+        ops={'Working_Count':agg.SUM('WorkingStatus')}
         #CallerId,gender,ModalDistrict,Degree,Count,gender_diversity,age_diversity,loc_diversity,topological_diversity
         ops['UsersCount_'+key]=agg.COUNT()
-        for col in ['Degree','Volume','Gender_Div','Age_Div','Loc_Div','Net_Div','Embeddedness','Constraints','Top4_Gender_Div','Top2_Gender_Div','Top4_Age_Div','Top2_Age_Div','Gender_Homophily_Calls','Gender_Homophily_Net','Age_Homophily_Calls','Age_Homophily_Net']:
+        for col in ['Degree','Volume','Gender_Div','Support','RadiusOfGyration','Age_Div','Loc_Div','Net_Div','Embeddedness','Constraints','Top4_Gender_Div','Top2_Gender_Div','Top4_Age_Div','Top2_Age_Div','Gender_Homophily_Calls','Gender_Homophily_Net','Age_Homophily_Calls','Age_Homophily_Net','AvgGeoReach']:
             ops['Avg_'+col+'_'+key]=agg.MEAN(col)
             ops['Mdn_'+col+'_'+key]=agg.QUANTILE(col,0.5)
             ops['Std_'+col+'_'+key]=agg.STD(col)
@@ -41,6 +42,7 @@ def merge_features(input_file,filter_file, output_file):
             if 'Mdn' in col:
                 sf_merged[col]=sf_merged[col].apply(lambda x:x[0])
         sf_merged.rename({'ModalDistrict':'District'})
+        print 'Progress : key', key, sf_merged.column_names()
         out_sfs.append(sf_merged)
 
     sf_final=out_sfs[0].join(out_sfs[1], how='outer',on='District').join(out_sfs[2], how='outer',on='District')
