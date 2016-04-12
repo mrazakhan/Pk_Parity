@@ -75,9 +75,9 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
     
     # Triads
     sf_triads=gl.SFrame.read_csv(triads_file)[['triangle_count','total_degree','embeddedness','SubscriberId']].rename({'SubscriberId':'CallerId'})
-    sf_triads['normalized_triangle_count']=sf_triads['triangle_count']/sf['total_degree']
+    sf_triads['normalized_triangle_count']=sf_triads['triangle_count']/sf_triads['total_degree']
     sf_triads_falter=gl.SFrame.read_csv(triads_file_falter)[['triangle_count','total_degree','embeddedness','SubscriberId']].rename({'SubscriberId':'CallerId','triangle_count':'triangle_count_FAlter','total_degree':'total_degree_FAlter','embeddedness':'embeddness_FAlter'})
-    sf_triads['normalized_triangle_count_FAlter']=sf_triads_falter['triangle_count_FAlter']/sf['total_degree_FAlter']
+    sf_triads_falter['normalized_triangle_count_FAlter']=sf_triads_falter['triangle_count_FAlter']/(sf_triads_falter['total_degree_FAlter'])
     # Contraints
     sf_constraints=gl.SFrame.read_csv(constraints_file, header=False).rename({'X1':'CallerId','X2':'Constraints'})
     sf_constraints_falter=gl.SFrame.read_csv(constraints_file_falter, header=False).rename({'X1':'CallerId','X2':'Constraints_FAlter'})
