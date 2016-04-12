@@ -89,7 +89,7 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
 	'working':sf_working, 'age':sf_age,'age_falter':sf_age_falter,'age2':sf_age2, 'age4':sf_age4, \
 	'gender':sf_gender,'gender_falter':sf_gender_falter,'gender2':sf_gender2, 'gender4':sf_gender4,\
 	'location':sf_location,'location_falter':sf_location_falter, 'topology':sf_topology,'topology_falter':sf_topology_falter,
-	'embeddedness':sf_embeddedness,'embeddedness_falter':sf_embeddedness_falter, \
+	'triads':sf_embeddedness,'triads_falter':sf_embeddedness_falter, \
 	'constraints':sf_constraints,'constraints_falter':sf_constraints_falter,\
 	'bw_centrality':sf_bw_centrality,'bw_centrality_falter':sf_bw_centrality_falter,\
 	'gender_homophily':sf_gender_homophily,'gender_homophily_falter':sf_gender_homophily_falter,\
