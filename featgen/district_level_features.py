@@ -3,7 +3,7 @@ import graphlab.aggregate as agg
 import math
 import argparse
 import csv
-
+import sys
 # Read SF, Make A Copy, Transpose A and B
 
 def merge_features(input_file,filter_file, output_file):
@@ -12,14 +12,29 @@ def merge_features(input_file,filter_file, output_file):
     print 'Input sframe shape before filtering users', sf_input.shape
     sf_input=sf_input.filter_by(sf_filter, 'CallerId',exclude=True)
     print 'Input sframe shape after filtering users', sf_input.shape
-    #CallerId,gender,ModalDistrict,Degree,Bw_Centrality,Embeddedness,Top4_age_diversity,Top2_age_diversity,Count,gender_homophily_calls,gender_homophily_net,topological_diversity,WorkingStatus,gender_diversity,age_diversity,age_homophily_calls,age_homophily_net,loc_diversity,Top2_gender_diversity,Top4_gender_diversity,Constraints
-	#CallerId,gender,ModalDistrict,Degree,Embeddedness,Top4_age_diversity,Top2_age_diversity,Count,topological_diversity,WorkingStatus,gender_diversity,age_diversity,loc_diversity,Top2_gender_diversity,Top4_gender_diversity,Constraints
-    sf_input.rename({'Count':'Volume','gender_diversity':'Gender_Div','Top2_gender_diversity':'Top2_Gender_Div',\
-    'Top4_gender_diversity':'Top4_Gender_Div','age_diversity':'Age_Div','loc_diversity':'Loc_Div',\
-    'Top4_age_diversity':'Top4_Age_Div','age_homophily_calls':'Age_Homophily_Calls',\
-    'gender_homophily_calls':'Gender_Homophily_Calls','age_homophily_net':'Age_Homophily_Net',\
-    'gender_homophily_net':'Gender_Homophily_Net','Top2_age_diversity':'Top2_Age_Div','topological_diversity':'Net_Div',
-    'rog':'RadiusOfGyration'})
+    print sf_input.column_names()
+    
+    rename_dict={ 'Degree':'NetworkSize', 'Degree_FAlter':'FemaleAlter_NetworkSize',\
+    'embeddedness':'Embeddedness','embeddedbess_FAlter':'FemaleAlter_Embeddedness',\
+    'normalized_triangle_count':'TriadicClosure', 'normalized_triangle_count_FAlter':'FemaleAlter_TriadicClosure',\
+    'Bw_Centrality':'BetweennessCentrality', 'Bw_Centrality_FAlter':'FemaleAlter_BetweennessCentrality',\
+    'age_homophily_calls':'AgeHomophilyCalls','age_homophily_calls_FAlter':'FemaleAlter_AgeHomophilyCalls',\
+    'age_homophily_net':'AgeHomophilyNet','age_homophily_net_falter':'FemaleAlter_AgeHomophilyNet',\
+    'Support':'Support','Support_FAlter':'FemaleAlter_Support',\
+    'loc_diversity':'LocationDiversity','loc_diversity_FAlter':'FemaleAlter_LocationDiversity',\
+    'topological_diversity':'NetworkDiversity','topological_diversity_FAlter':'FemaleAlter_NetworkDiversity',\
+    'Constraints':'Constraints','Constraints_FAlter':'FemaleAlter_Constraints',\
+    'age_diversity':'AgeDiversity','age_diversity_FAlter':'FemaleAlter_AgeDiversity',\
+    'gender_diversity':'GenderDiversity','gender_diversity_FAlter':'FemaleAlter_GenderDiversity',\
+    'Count':'Volume','Count_FAlter':'FemaleAlter_Volume',\
+    'AvgGeoReach':'AvgGeoReach',\
+    'AvgGeoReach_FAlter':'FemaleAlter_AvgGeoReach', \
+    'rog':'RadiusOfGyration',\
+    'gender_homophily_calls':'GenderHomophilyCalls','gender_homophily_calls_FAlter':'FemaleAlter_GenderHomophilyCalls',\
+    'gender_homophily_net':'GenderHomophilyNet','gender_homophily_net_FAlter':'FemaleAlter_GenderHomophilyNet'} 
+    sf_input.rename(rename_dict)
+
+ 
     sf_males=sf_input.filter_by(1,'gender')
     sf_females=sf_input.filter_by(0,'gender')
     sf_males.remove_column('gender')
@@ -31,7 +46,7 @@ def merge_features(input_file,filter_file, output_file):
         ops={'Working_Count':agg.SUM('WorkingStatus')}
         #CallerId,gender,ModalDistrict,Degree,Count,gender_diversity,age_diversity,loc_diversity,topological_diversity
         ops['UsersCount_'+key]=agg.COUNT()
-        for col in ['Degree','Volume','Gender_Div','Support','RadiusOfGyration','Age_Div','Loc_Div','Net_Div','Embeddedness','Constraints','Top4_Gender_Div','Top2_Gender_Div','Top4_Age_Div','Top2_Age_Div','Gender_Homophily_Calls','Gender_Homophily_Net','Age_Homophily_Calls','Age_Homophily_Net','AvgGeoReach']:
+        for col in rename_dict.keys():
             ops['Avg_'+col+'_'+key]=agg.MEAN(col)
             ops['Mdn_'+col+'_'+key]=agg.QUANTILE(col,0.5)
             ops['Std_'+col+'_'+key]=agg.STD(col)
