@@ -75,10 +75,12 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
     
     # Triads
     sf_triads=gl.SFrame.read_csv(triads_file)[['triangle_count','total_degree','embeddedness','SubscriberId']].rename({'SubscriberId':'CallerId'})
+    sf_triads['normalized_triangle_count']=sf_triads['triangle_count']/sf['total_degree']
     sf_triads_falter=gl.SFrame.read_csv(triads_file_falter)[['triangle_count','total_degree','embeddedness','SubscriberId']].rename({'SubscriberId':'CallerId','triangle_count':'triangle_count_FAlter','total_degree':'total_degree_FAlter','embeddedness':'embeddness_FAlter'})
+    sf_triads['normalized_triangle_count_FAlter']=sf_triads_falter['triangle_count_FAlter']/sf['total_degree_FAlter']
     # Contraints
     sf_constraints=gl.SFrame.read_csv(constraints_file, header=False).rename({'X1':'CallerId','X2':'Constraints'})
-    sf_constraints_falter=gl.SFrame.read_csv(constraints_file_falter, header=False).rename({'X1':'CallerId','X2':'Constraints'})
+    sf_constraints_falter=gl.SFrame.read_csv(constraints_file_falter, header=False).rename({'X1':'CallerId','X2':'Constraints_FAlter'})
 
     sf_modal=gl.SFrame.read_csv(modal_districts_file)#.rename({'MostFrequent':'ModalDistrict'})
     sf_profile=gl.SFrame.read_csv(profile_file, delimiter='\t')[['msisdn','gend']].rename({'msisdn':'CallerId','gend':'gender'})
@@ -110,7 +112,7 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
     sf_merged=sf_modal.join(sf_merged, on='CallerId',how='inner')
     print ' Shape of the merged frame after merging {} is {}'.format( 'modal districts data', sf_merged.shape)
     
-    sf_profile['CallerId']=sf_profile'CallerId'].apply(lambda x:str(x))
+    sf_profile['CallerId']=sf_profile['CallerId'].apply(lambda x:str(x))
     sf_merged=sf_profile.join(sf_merged, on='CallerId',how='inner')
     print ' Shape of the merged frame after merging {} is {}'.format( 'profile data', sf_merged.shape)
 
