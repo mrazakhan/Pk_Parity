@@ -82,6 +82,8 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
 
     sf_modal=gl.SFrame.read_csv(modal_districts_file)#.rename({'MostFrequent':'ModalDistrict'})
     sf_profile=gl.SFrame.read_csv(profile_file, delimiter='\t')[['msisdn','gend']].rename({'msisdn':'CallerId','gend':'gender'})
+    
+    sf_degree['CallerId']=sf_degree['CallerId'].apply(lambda x:str(x))
     sf_merged=sf_degree
     
     print ' Shape of the merged frame after merging {} is {}'.format( 'degree', sf_degree.shape)
@@ -89,7 +91,7 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
 	'working':sf_working, 'age':sf_age,'age_falter':sf_age_falter,'age2':sf_age2, 'age4':sf_age4, \
 	'gender':sf_gender,'gender_falter':sf_gender_falter,'gender2':sf_gender2, 'gender4':sf_gender4,\
 	'location':sf_location,'location_falter':sf_location_falter, 'topology':sf_topology,'topology_falter':sf_topology_falter,
-	'triads':sf_embeddedness,'triads_falter':sf_embeddedness_falter, \
+	'triads':sf_triads,'triads_falter':sf_triads_falter, \
 	'constraints':sf_constraints,'constraints_falter':sf_constraints_falter,\
 	'bw_centrality':sf_bw_centrality,'bw_centrality_falter':sf_bw_centrality_falter,\
 	'gender_homophily':sf_gender_homophily,'gender_homophily_falter':sf_gender_homophily_falter,\
@@ -98,14 +100,17 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
 	 'georeach_falter':sf_georeach_falter}
 
     for key in sframes_dict.keys():
+        print 'Merge key', key
+        sframes_dict[key]['CallerId']=sframes_dict[key]['CallerId'].apply(lambda x:str(x))  
         sf_merged=sf_merged.join(sframes_dict[key], on='CallerId', how='left')
         print ' Shape of the merged frame after merging {} is {}'.format( key, sf_merged.shape)
 
     
-
+    sf_modal['CallerId']=sf_modal['CallerId'].apply(lambda x:str(x))
     sf_merged=sf_modal.join(sf_merged, on='CallerId',how='inner')
     print ' Shape of the merged frame after merging {} is {}'.format( 'modal districts data', sf_merged.shape)
     
+    sf_profile['CallerId']=sf_profile'CallerId'].apply(lambda x:str(x))
     sf_merged=sf_profile.join(sf_merged, on='CallerId',how='inner')
     print ' Shape of the merged frame after merging {} is {}'.format( 'profile data', sf_merged.shape)
 
