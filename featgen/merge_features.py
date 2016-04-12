@@ -70,15 +70,15 @@ def merge_features(degree_file,degree_file_falter, volume_file,volume_file_falte
     sf_location_falter=gl.SFrame.read_csv(location_diversity_file_falter)[['CallerId','loc_diversity']].rename({'loc_diversity':'Loc_Diversity_FAlter'})
  
     # Net Diversity
-    sf_topology=gl.SFrame.read_csv(topological_diversity_file)[['CallerId','topological_diversity']]
-    sf_topology_falter=gl.SFrame.read_csv(topological_diversity_file_falter)[['CallerId','topological_diversity']].rename({'topological_diversity':'topological_diversity_FAlter'})
+    sf_topology=gl.SFrame.read_csv(net_diversity_file)[['CallerId','topological_diversity']]
+    sf_topology_falter=gl.SFrame.read_csv(net_diversity_file_falter)[['CallerId','topological_diversity']].rename({'topological_diversity':'topological_diversity_FAlter'})
     
     # Triads
-    sf_triads=gl.SFrame.read_csv(embeddedness_file)[['triangle_count,total_degree,embeddedness,SubscriberId']].rename({'SubscriberId':'CallerId'})
-    sf_triads_falter=gl.SFrame.read_csv(embeddedness_file)[['triangle_count,total_degree,embeddedness,SubscriberId']].rename({'SubscriberId':'CallerId','triangle_count':'triangle_count_FAlter','total_degree':'total_degree_FAlter','embeddedness':'embeddness_FAlter'})
+    sf_triads=gl.SFrame.read_csv(triads_file)[['triangle_count','total_degree','embeddedness','SubscriberId']].rename({'SubscriberId':'CallerId'})
+    sf_triads_falter=gl.SFrame.read_csv(triads_file_falter)[['triangle_count','total_degree','embeddedness','SubscriberId']].rename({'SubscriberId':'CallerId','triangle_count':'triangle_count_FAlter','total_degree':'total_degree_FAlter','embeddedness':'embeddness_FAlter'})
     # Contraints
-    sf_constraints=gl.SFrame.read_csv(constraints_file)[['CallerId','Constraints']]
-    sf_constraints_falter=gl.SFrame.read_csv(constraints_file_falter)[['CallerId','Constraints']].rename({'Constraints':'Constraints_FAlter'})
+    sf_constraints=gl.SFrame.read_csv(constraints_file).rename({'X1':'CallerId','X2':'Constraints'})
+    sf_constraints_falter=gl.SFrame.read_csv(constraints_file_falter).rename({'X1':'CallerId','X2':'Constraints'})
 
     sf_modal=gl.SFrame.read_csv(modal_districts_file)#.rename({'MostFrequent':'ModalDistrict'})
     sf_profile=gl.SFrame.read_csv(profile_file, delimiter='\t')[['msisdn','gend']].rename({'msisdn':'CallerId','gend':'gender'})
