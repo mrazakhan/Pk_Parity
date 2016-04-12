@@ -7,7 +7,7 @@ import sys
 # Read SF, Make A Copy, Transpose A and B
 
 def merge_features(input_file,filter_file, output_file):
-    sf_input=gl.SFrame.read_csv(input_file)
+    sf_input=gl.SFrame.read_csv(input_file, column_type_hints={'rog':float,'AvgGeoReach':float,'AvgGeoReach_FAlter':float})
     sf_filter=gl.SFrame.read_csv(filter_file)['CallerId']
     print 'Input sframe shape before filtering users', sf_input.shape
     sf_input=sf_input.filter_by(sf_filter, 'CallerId',exclude=True)
@@ -46,7 +46,9 @@ def merge_features(input_file,filter_file, output_file):
         ops={'Working_Count':agg.SUM('WorkingStatus')}
         #CallerId,gender,ModalDistrict,Degree,Count,gender_diversity,age_diversity,loc_diversity,topological_diversity
         ops['UsersCount_'+key]=agg.COUNT()
-        for col in rename_dict.keys():
+        for col in rename_dict.values():
+            print 'PROGRESS: Generating Avg, Mdn and std for {}'.format(col)
+            sframes_dict[key][col]=sframes_dict[key][col].apply(lambda x:float(x))
             ops['Avg_'+col+'_'+key]=agg.MEAN(col)
             ops['Mdn_'+col+'_'+key]=agg.QUANTILE(col,0.5)
             ops['Std_'+col+'_'+key]=agg.STD(col)
