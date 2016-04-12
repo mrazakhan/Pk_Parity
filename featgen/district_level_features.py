@@ -15,7 +15,7 @@ def merge_features(input_file,filter_file, output_file):
     print sf_input.column_names()
     
     rename_dict={ 'Degree':'NetworkSize', 'Degree_FAlter':'FemaleAlter_NetworkSize',\
-    'embeddedness':'Embeddedness','embeddedbess_FAlter':'FemaleAlter_Embeddedness',\
+    'embeddedness':'Embeddedness','embeddedness_FAlter':'FemaleAlter_Embeddedness',\
     'normalized_triangle_count':'TriadicClosure', 'normalized_triangle_count_FAlter':'FemaleAlter_TriadicClosure',\
     'Bw_Centrality':'BetweennessCentrality', 'Bw_Centrality_FAlter':'FemaleAlter_BetweennessCentrality',\
     'age_homophily_calls':'AgeHomophilyCalls','age_homophily_calls_FAlter':'FemaleAlter_AgeHomophilyCalls',\
