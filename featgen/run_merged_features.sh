@@ -4,11 +4,12 @@ python merge_features.py -df gsm_sms_degree.csv -dff Females_Alter_gsm_sms_degre
 	-adf gsm_sms_age_diversity.csv -adff Females_Alter_gsm_sms_age_diversity.csv \
 	-gdf gsm_sms_gender_diversity.csv -gdff Females_Alter_gsm_sms_gender_diversity.csv \
 	-ldf gsm_sms_location_diversity.csv -ldff Females_Alter_gsm_sms_location_diversity.csv \
-	-tdf gsm_sms_topological_diversity.csv -tdff Females_Alter_gsm_sms_topological_diversity.csv \
+	-ndf gsm_sms_topological_diversity.csv -ndff Females_Alter_gsm_sms_topological_diversity.csv \
 	-adf2 Top2_gsm_sms_age_diversity.csv -adf4 Top4_gsm_sms_age_diversity.csv \
 	-gdf2 Top2_gsm_sms_gender_diversity.csv -gdf4 Top4_gsm_sms_gender_diversity.csv \
-	-tdf gsm_sms_triads.csv -tdff Females_Alter_gsm_sms_topological_diversity.csv  \ 
-	-cdf gsm_sms_constraints.csv -cdff ./gsm_sms_constraints_falter.csv\
+	-tdf gsm_sms_triads.csv \
+	-tdff Females_Alter_gsm_sms_triads.csv\
+ 	-cdf gsm_sms_constraints.csv -cdff ./gsm_sms_constraints_falter.csv\
 	-bcdf gsm_sms_bc.csv -bcdff ./gsm_sms_bc_falter.csv\
 	-ahdf gsm_sms_age_homophily.csv -ahdff Females_Alter_gsm_sms_age_homophily.csv\
 	-ghdf gsm_sms_gender_homophily.csv -ghdff Females_Alter_gsm_sms_gender_homophily.csv\
