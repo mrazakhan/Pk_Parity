@@ -19,9 +19,9 @@ def merge_features(input_file,filter_file, output_file):
     'normalized_triangle_count':'TriadicClosure', 'normalized_triangle_count_FAlter':'FemaleAlter_TriadicClosure',\
     'Bw_Centrality':'BetweennessCentrality', 'Bw_Centrality_FAlter':'FemaleAlter_BetweennessCentrality',\
     'age_homophily_calls':'AgeHomophilyCalls','age_homophily_calls_FAlter':'FemaleAlter_AgeHomophilyCalls',\
-    'age_homophily_net':'AgeHomophilyNet','age_homophily_net_falter':'FemaleAlter_AgeHomophilyNet',\
+    'age_homophily_net':'AgeHomophilyNet','age_homophily_net_FAlter':'FemaleAlter_AgeHomophilyNet',\
     'Support':'Support','Support_FAlter':'FemaleAlter_Support',\
-    'loc_diversity':'LocationDiversity','loc_diversity_FAlter':'FemaleAlter_LocationDiversity',\
+    'loc_diversity':'LocationDiversity','Loc_Diversity_FAlter':'FemaleAlter_LocationDiversity',\
     'topological_diversity':'NetworkDiversity','topological_diversity_FAlter':'FemaleAlter_NetworkDiversity',\
     'Constraints':'Constraints','Constraints_FAlter':'FemaleAlter_Constraints',\
     'age_diversity':'AgeDiversity','age_diversity_FAlter':'FemaleAlter_AgeDiversity',\
