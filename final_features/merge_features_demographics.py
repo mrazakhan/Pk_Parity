@@ -2,7 +2,7 @@ import graphlab as gl
 import argparse
 import csv
 import sys
-
+import re
 def merge_features_demographics(features_file, demographics_file, output_file):
 	ff=gl.SFrame.read_csv(features_file)
 	#ff['District']=ff['District'].apply(lambda x:CorrectDistrictNames(x))
@@ -26,10 +26,11 @@ def merge_features_demographics(features_file, demographics_file, output_file):
 	merged_df['Census_Overall']=merged_df['Census_Male']+merged_df['Census_Female']
 	print merged_df.column_names()
 	#sys.exit(0)
-	for col in list(merged_df.select_columns([int,float]).column_names()):
-       
+	col_list=[each for each in merged_df.select_columns([int,float]).column_names()]
+	col_list=[re.sub('_Male$|_Female$|_Overall$|Avg_|Mdn_|Std_','',each)  for each in col_list if 'Score' not in each and 'Rank' not in each]
+	for col in set(col_list):
 		print 'Generating Proportion and Ratio for ', col
-		if col in ['UsersCount','Voters','Census']:
+		if col in ['UsersCount','Voters','Census','Rank2015'] or 'Working_Count' in col:
 			merged_df['Ratio_'+col]=merged_df[col+'_Female']/merged_df[col+'_Male']
 			merged_df['Proportion_'+col]=merged_df[col+'_Female']/merged_df[col+'_Overall']
 			

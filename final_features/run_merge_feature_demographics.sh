@@ -1,2 +1,2 @@
 python merge_features_demographics.py -cf district_gsm_sms_features.csv -df Demographics.csv -of district_demographics_gsm_sms_features.csv
-#python merge_features_demographics.py -cf district_gsm_sms_features_filterCall_g2.csv -df Demographics.csv -of district_demographics_gsm_sms_features_filterCall_g2.csv
+python merge_features_demographics.py -cf district_gsm_sms_features_filterCall_g2.csv -df Demographics.csv -of district_demographics_gsm_sms_features_filterCall_g2.csv
