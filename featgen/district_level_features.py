@@ -43,8 +43,8 @@ def merge_features(input_file,filter_file, output_file):
     sframes_dict={'Male':sf_males, 'Female':sf_females,'Overall':sf_overall}
     out_sfs=[]
     for key in sframes_dict:
-        ops={'Working_Count':agg.SUM('WorkingStatus')}
         #CallerId,gender,ModalDistrict,Degree,Count,gender_diversity,age_diversity,loc_diversity,topological_diversity
+    	ops={'Working_Count_'+key:agg.SUM('WorkingStatus')}
         ops['UsersCount_'+key]=agg.COUNT()
         for col in rename_dict.values():
             print 'PROGRESS: Generating Avg, Mdn and std for {}'.format(col)
@@ -59,7 +59,7 @@ def merge_features(input_file,filter_file, output_file):
             if 'Mdn' in col:
                 sf_merged[col]=sf_merged[col].apply(lambda x:x[0])
         sf_merged.rename({'ModalDistrict':'District'})
-        print 'Progress : key', key, sf_merged.column_names()
+        print '*********************Progress : key', key, sf_merged.column_names()
         out_sfs.append(sf_merged)
 
     sf_final=out_sfs[0].join(out_sfs[1], how='outer',on='District').join(out_sfs[2], how='outer',on='District')
